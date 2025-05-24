@@ -113,7 +113,20 @@ impl Opcode {
             args
                 .as_str()
                 .split(",")
-                .flat_map(|line| line.trim().parse::<u8>())
+                .flat_map(|argument| {
+                    if argument.starts_with("-") {
+                        match argument.trim().parse::<i8>() {
+                            Ok(signed_num) => return Ok(signed_num as u8),
+                            Err(_) => Err(0)
+                        }
+                    }
+                    else {
+                        match argument.trim().parse::<u8>() {
+                            Ok(num) => return Ok(num),
+                            Err(_) => Err(0)
+                        }
+                    }
+                })
                 .collect::<Vec<u8>>()
         };
         
@@ -190,6 +203,11 @@ impl fmt::Display for Opcode {
 
         if self.name == "Text" {
             let _ = write!(f, "{})", self.text_id.unwrap());
+            return Ok(());
+        }
+
+        if self.name == "CheckCharacter" || self.name == "CheckObject" || self.name == "SetChoiceText" {
+            let _ = write!(f, "{})", *self.hexcode.get(2).unwrap() as i8);
             return Ok(());
         }
 

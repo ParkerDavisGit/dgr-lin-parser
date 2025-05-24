@@ -33,6 +33,10 @@ pub fn compile_lin(filename: String, output_folder: String) -> eyre::Result<()> 
     // TODO: stop and tell python when something doesn't work here
     // I WANT LINE NUMBERS HERE
     for line in reader {
+        if line.starts_with("#") {
+            
+        }
+
         let try_from_result: (Option<Opcode>, Option<String>) = Opcode::try_from_string(line, text_id);
 
         match try_from_result.0 {
